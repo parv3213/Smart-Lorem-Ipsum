@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import { TextGeneratorContext } from '../context/TextGeneratorContext';
 
 const Search = () => {
-  const { searchText, setSearchText, generateText, fetching } = useContext(TextGeneratorContext);
+  const { searchText, setSearchText, generateText, maxTokens, setMaxTokens, fetching } =
+    useContext(TextGeneratorContext);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -12,23 +13,47 @@ const Search = () => {
 
   return (
     <form className="relative mb-20" onSubmit={e => handleSubmit(e)}>
-      <label htmlFor="keywords" className="text-gray-700">
-        Enter a sentence or keywords
-      </label>
-      <br />
-      <div className="flex h-10 items-center justify-between">
-        <input
-          type="text"
-          id="keywords"
-          placeholder="Ram is a good frontend developer"
-          className="h-full w-full rounded-md rounded-r-none border border-r-0 border-slate-300 py-2 pl-9 pr-3 shadow-sm placeholder:italic placeholder:text-slate-400 focus:shadow-lg focus:outline-none sm:text-sm"
-          value={searchText}
-          onChange={e => {
-            e.preventDefault();
-            setSearchText(() => e.target.value);
-          }}
-        />
-        <div className="flex h-full w-[5rem] items-center justify-center rounded-md rounded-l-none border-l-0 border-slate-300 bg-gray-800 text-white">
+      <div className="flex items-center justify-between pb-4">
+        <div className="flex-1">
+          <label htmlFor="keywords" className="text-gray-500">
+            Enter a sentence or keywords
+          </label>
+          <input
+            type="text"
+            id="keywords"
+            placeholder="Ram is a good frontend developer"
+            className="h-full w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 shadow-sm placeholder:italic placeholder:text-slate-400 focus:shadow-lg focus:outline-none sm:text-sm"
+            value={searchText}
+            onChange={e => {
+              e.preventDefault();
+              setSearchText(() => e.target.value);
+            }}
+          />
+        </div>
+
+        <div className="ml-4 max-w-[10rem]">
+          <label htmlFor="maxWords" className="text-gray-500">
+            Max word count
+          </label>
+          <input
+            min={10}
+            type="number"
+            id="maxWords"
+            className="h-full w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 shadow-sm focus:shadow-lg focus:outline-none sm:text-sm"
+            value={maxTokens}
+            onChange={e => {
+              e.preventDefault();
+              setMaxTokens(() => Number(e.target.value));
+            }}
+            onBlur={() => {
+              if (maxTokens < 10) setMaxTokens(10);
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="flex h-[2rem] w-full justify-center">
+        <div className="flex w-[20%] items-center justify-center rounded-md border-slate-300 bg-gray-700 text-white">
           {fetching ? (
             <svg
               className="h-5 w-5 animate-spin text-white"
@@ -44,7 +69,9 @@ const Search = () => {
               ></path>
             </svg>
           ) : (
-            <button>Go!</button>
+            <button className="h-full w-full disabled:opacity-50" disabled={searchText.length < 1}>
+              Go
+            </button>
           )}
         </div>
       </div>
