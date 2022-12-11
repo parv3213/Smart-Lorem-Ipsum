@@ -4,7 +4,7 @@ import { TagsInput } from 'react-tag-input-component';
 import { TextGeneratorContext } from '../context/TextGeneratorContext';
 
 const Search = () => {
-  const { generateText, maxTokens, setSearchText, setMaxTokens, fetching } = useContext(TextGeneratorContext);
+  const { maxTokens, setSearchText, setMaxTokens, fetching } = useContext(TextGeneratorContext);
 
   const [textAmount, setTextAmount] = useState(5);
   const [keywords, setKeywords] = useState<string[]>([]);
