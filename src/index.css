@@ -1,5 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400,700');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rti--container {
+  --rti-border: rgb(203 213 225) !important;
+  --rti-main: none !important;
+}

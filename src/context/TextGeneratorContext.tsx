@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 const { REACT_APP_OPENAI_KEY: openaiKey, REACT_APP_OPENAI_MODEL_NAME: openaiModelName } = process.env;
 
@@ -15,7 +15,7 @@ interface TextGeneratorContextInterface {
 export const TextGeneratorContext = createContext<TextGeneratorContextInterface>({
   searchText: '',
   setSearchText: () => {},
-  maxTokens: 50,
+  maxTokens: 500,
   fetching: false,
   setMaxTokens: () => {},
   generatedText: '',
@@ -24,13 +24,21 @@ export const TextGeneratorContext = createContext<TextGeneratorContextInterface>
 
 export const TextGeneratorContextProvider = ({ children }: any) => {
   const [searchText, setSearchText] = useState('');
-  const [maxTokens, setMaxTokens] = useState(50);
+  const [maxTokens, setMaxTokens] = useState(500);
   const [generatedText, setGeneratedText] = useState<string>();
   const [fetching, setFetching] = useState(false);
 
+  useEffect(() => {
+    if (searchText.length > 0) {
+      generateText();
+    }
+  }, [searchText]);
+
   const generateText = async () => {
+    console.log(searchText);
     if (searchText.length === 0) return;
     setFetching(true);
+    setGeneratedText('');
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `Bearer ${openaiKey}`);
@@ -38,7 +46,7 @@ export const TextGeneratorContextProvider = ({ children }: any) => {
     const raw = JSON.stringify({
       model: openaiModelName,
       prompt: searchText,
-      temperature: 0.6,
+      temperature: 1,
       max_tokens: maxTokens,
     });
 
@@ -54,10 +62,12 @@ export const TextGeneratorContextProvider = ({ children }: any) => {
         .then(response => response.json())
         .then(json => json);
       setGeneratedText(result?.choices[0]?.text);
-      setFetching(false);
     } catch (e: any) {
       console.log('Error: ', e);
       alert(e.message);
+    } finally {
+      setSearchText('');
+      setFetching(false);
     }
   };
 

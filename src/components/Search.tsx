@@ -1,54 +1,59 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import { TagsInput } from 'react-tag-input-component';
+
 import { TextGeneratorContext } from '../context/TextGeneratorContext';
 
 const Search = () => {
-  const { searchText, setSearchText, generateText, maxTokens, setMaxTokens, fetching } =
-    useContext(TextGeneratorContext);
+  const { generateText, maxTokens, setSearchText, setMaxTokens, fetching } = useContext(TextGeneratorContext);
+
+  const [textAmount, setTextAmount] = useState(5);
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [textAmountType, setTextAmountType] = useState('paragraph');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    generateText();
+    setSearchText(`Write ${textAmount} ${textAmountType} about ${keywords.toString()}`);
   };
 
   return (
     <form className="relative mb-20" onSubmit={e => handleSubmit(e)}>
-      <div className="flex items-center justify-between pb-4">
+      <div className="flex flex-1 flex-col flex-wrap items-center justify-between pb-4 md:flex-row">
         <div className="flex-1">
           <label htmlFor="keywords" className="text-gray-500">
-            Enter a sentence or keywords
+            Enter keywords
           </label>
-          <input
-            type="text"
-            id="keywords"
-            placeholder="Ram is a good frontend developer"
-            className="h-full w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 shadow-sm placeholder:italic placeholder:text-slate-400 focus:shadow-lg focus:outline-none sm:text-sm"
-            value={searchText}
-            onChange={e => {
-              e.preventDefault();
-              setSearchText(() => e.target.value);
-            }}
-          />
+          <TagsInput value={keywords} onChange={setKeywords} name="keywords" placeHolder="Penguins" />
+          <em className="text-xs text-gray-500">press enter to add new tag</em>
         </div>
 
-        <div className="ml-4 max-w-[10rem]">
-          <label htmlFor="maxWords" className="text-gray-500">
-            Max word count
-          </label>
-          <input
-            min={10}
-            type="number"
-            id="maxWords"
-            className="h-full w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 shadow-sm focus:shadow-lg focus:outline-none sm:text-sm"
-            value={maxTokens}
-            onChange={e => {
-              e.preventDefault();
-              setMaxTokens(() => Number(e.target.value));
-            }}
-            onBlur={() => {
-              if (maxTokens < 10) setMaxTokens(10);
-            }}
-          />
+        <div className="ml-4 mt-4 flex flex-col">
+          <div className="flex md:mt-0">
+            <input
+              min={1}
+              type="number"
+              className="h-full w-full rounded-md border border-slate-300 py-2 pl-2 shadow-sm focus:outline-black sm:text-sm"
+              value={textAmount}
+              onChange={e => {
+                e.preventDefault();
+                setTextAmount(() => Number(e.target.value));
+              }}
+              onBlur={() => {
+                if (maxTokens < 1) setMaxTokens(1);
+              }}
+            />
+            <select
+              value={textAmountType}
+              onChange={e => {
+                setTextAmountType(e.target.value);
+              }}
+            >
+              <option value="paragraphs">paragraphs</option>
+              <option value="words">words</option>
+              <option value="lists">lists</option>
+            </select>
+          </div>
+          <em className="text-xs text-gray-500">max word count is 500</em>
         </div>
       </div>
 
@@ -69,7 +74,7 @@ const Search = () => {
               ></path>
             </svg>
           ) : (
-            <button className="h-full w-full disabled:opacity-50" disabled={searchText.length < 1}>
+            <button className="h-full w-full disabled:opacity-50" disabled={keywords.length === 0}>
               Go
             </button>
           )}
