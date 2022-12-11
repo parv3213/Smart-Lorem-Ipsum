@@ -28,7 +28,7 @@ const Search = () => {
         </div>
 
         <div className="ml-4 mt-4 flex flex-col">
-          <div className="flex md:mt-0">
+          <div className="flex h-[2.75rem] md:mt-0">
             <input
               min={1}
               type="number"

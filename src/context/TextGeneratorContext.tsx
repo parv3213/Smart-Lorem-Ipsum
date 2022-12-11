@@ -28,14 +28,17 @@ export const TextGeneratorContextProvider = ({ children }: any) => {
   const [generatedText, setGeneratedText] = useState<string>();
   const [fetching, setFetching] = useState(false);
 
-  useEffect(() => {
-    if (searchText.length > 0) {
-      generateText();
-    }
-  }, [searchText]);
+  useEffect(
+    () => {
+      if (searchText.length > 0) {
+        generateText();
+      }
+    },
+    // eslint-disable-next-line
+    [searchText],
+  );
 
   const generateText = async () => {
-    console.log(searchText);
     if (searchText.length === 0) return;
     setFetching(true);
     setGeneratedText('');
